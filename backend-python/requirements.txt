@@ -1,4 +1,4 @@
 fastapi
 uvicorn
 asyncpg
-aioredis
+redis>=4.2.0

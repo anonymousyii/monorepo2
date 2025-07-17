@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import asyncpg
-import aioredis
+import redis.asyncio as redis
 import os
 import json
 
@@ -26,7 +26,7 @@ class User(BaseModel):
 @app.on_event("startup")
 async def startup():
     app.state.db = await asyncpg.create_pool(DB_DSN)
-    app.state.redis = await aioredis.from_url(REDIS_URL)
+    app.state.redis = redis.from_url(REDIS_URL, decode_responses=True)
     async with app.state.db.acquire() as conn:
         await conn.execute("""
             CREATE TABLE IF NOT EXISTS users_python (
