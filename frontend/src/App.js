@@ -1,4 +1,5 @@
 import { useState } from "react";
+import "./App.css";
 
 function App() {
   const [goUsers, setGoUsers] = useState([]);
@@ -40,7 +41,7 @@ function App() {
   }
 
   return (
-    <div style={{ padding: 20 }}>
+    <div className="app-container">
       <h1>Full Stack App</h1>
       <div style={{ marginBottom: 40 }}>
         <h2>Go Backend Users</h2>
