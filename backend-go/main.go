@@ -100,5 +100,5 @@ func main() {
         port = "8080"
     }
     fmt.Println("Go server running on port", port)
-    http.ListenAndServe(":"+port, nil)
+    http.ListenAndServe("0.0.0.0:"+port, nil)
 }
