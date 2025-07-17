@@ -71,6 +71,19 @@ func createUser(w http.ResponseWriter, r *http.Request) {
     w.WriteHeader(201)
 }
 
+func withCORS(handler http.HandlerFunc) http.HandlerFunc {
+    return func(w http.ResponseWriter, r *http.Request) {
+        w.Header().Set("Access-Control-Allow-Origin", "*")
+        w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+        w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+        if r.Method == http.MethodOptions {
+            w.WriteHeader(http.StatusNoContent)
+            return
+        }
+        handler(w, r)
+    }
+}
+
 func main() {
     pgURL := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable",
         os.Getenv("DB_USER"), os.Getenv("DB_PASSWORD"),
@@ -87,13 +100,13 @@ func main() {
         Addr: fmt.Sprintf("%s:%s", os.Getenv("REDIS_HOST"), os.Getenv("REDIS_PORT")),
     })
 
-    http.HandleFunc("/users", func(w http.ResponseWriter, r *http.Request) {
+    http.HandleFunc("/users", withCORS(func(w http.ResponseWriter, r *http.Request) {
         if r.Method == http.MethodGet {
             getUsers(w, r)
         } else if r.Method == http.MethodPost {
             createUser(w, r)
         }
-    })
+    }))
 
     port := os.Getenv("PORT")
     if port == "" {
