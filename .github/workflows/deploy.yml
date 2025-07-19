@@ -32,7 +32,7 @@ jobs:
         tar -czf frontend.tar.gz -C frontend .
         echo "Deploying frontend..."
         caprover deploy \
-          -n new-frontend \
+          --appName new-frontend \
           --tarFile ./frontend.tar.gz \
           --caproverName mycaprover
 
@@ -43,7 +43,7 @@ jobs:
         tar -czf backend-go.tar.gz -C backend-go .
         echo "Deploying Go backend..."
         caprover deploy \
-          -n new-backend-go \
+          --appName new-backend-go \
           --tarFile ./backend-go.tar.gz \
           --caproverName mycaprover
 
@@ -54,6 +54,6 @@ jobs:
         tar -czf backend-python.tar.gz -C backend-python .
         echo "Deploying Python backend..."
         caprover deploy \
-          -n new-backend-python \
+          --appName new-backend-python \
           --tarFile ./backend-python.tar.gz \
           --caproverName mycaprover
