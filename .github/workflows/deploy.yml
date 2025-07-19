@@ -25,32 +25,29 @@ jobs:
           -p ${{ secrets.CAPROVER_PASSWORD }} \
           -n mycaprover
 
-    # Deploy Frontend
+    # ✅ Deploy Frontend
     - name: Deploy Frontend
       run: |
-        FRONTEND_PATH=$(pwd)/frontend
-        echo "Deploying from $FRONTEND_PATH"
+        cd frontend
+        echo "Deploying frontend from $(pwd)"
         caprover deploy \
           -n new-frontend \
-          -d $FRONTEND_PATH \
           --caproverName mycaprover
 
-    # Deploy Go Backend
+    # ✅ Deploy Go Backend
     - name: Deploy Go Backend
       run: |
-        GO_PATH=$(pwd)/backend-go
-        echo "Deploying from $GO_PATH"
+        cd backend-go
+        echo "Deploying Go backend from $(pwd)"
         caprover deploy \
           -n new-backend-go \
-          -d $GO_PATH \
           --caproverName mycaprover
 
-    # Deploy Python Backend
+    # ✅ Deploy Python Backend
     - name: Deploy Python Backend
       run: |
-        PY_PATH=$(pwd)/backend-python
-        echo "Deploying from $PY_PATH"
+        cd backend-python
+        echo "Deploying Python backend from $(pwd)"
         caprover deploy \
           -n new-backend-python \
-          -d $PY_PATH \
           --caproverName mycaprover
