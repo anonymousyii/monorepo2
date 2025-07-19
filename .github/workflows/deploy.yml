@@ -25,7 +25,7 @@ jobs:
     - name: Login to CapRover
       run: |
         caprover login \
-          -u http://captain.34.122.198.221.nip.io \
+          -u https://captain.34.122.198.221.nip.io \
           -p ${{ secrets.CAPROVER_PASSWORD }} \
           -n mycaprover
 
