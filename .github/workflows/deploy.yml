@@ -25,11 +25,6 @@ jobs:
           -p ${{ secrets.CAPROVER_PASSWORD }} \
           -n mycaprover
 
-    - name: Verify CapRover Login
-      run: |
-        echo "Listing apps to verify login..."
-        caprover list apps
-
     - name: Deploy Frontend
       run: |
         caprover deploy \
