@@ -9,19 +9,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    # 1. Checkout your repository
     - name: Checkout code
       uses: actions/checkout@v4
 
-    # 2. Install CapRover CLI
     - name: Install CapRover CLI
       run: npm install -g caprover
 
-    # 3. Clean Old CapRover Machine (if exists)
     - name: Clean Old CapRover Machine
       run: caprover logout -n mycaprover || true
 
-    # 4. Login to CapRover
     - name: Login to CapRover
       run: |
         caprover login \
@@ -29,13 +25,11 @@ jobs:
           -p ${{ secrets.CAPROVER_PASSWORD }} \
           -n mycaprover
 
-    # 5. Verify Login (Debug Step)
     - name: Verify CapRover Login
       run: |
         echo "Listing apps to verify login..."
-        caprover list apps --caproverName mycaprover
+        caprover list apps
 
-    # 6. Deploy Frontend
     - name: Deploy Frontend
       run: |
         caprover deploy \
@@ -43,7 +37,6 @@ jobs:
           -b ./frontend \
           --caproverName mycaprover
 
-    # 7. Deploy Go Backend
     - name: Deploy Go Backend
       run: |
         caprover deploy \
@@ -51,7 +44,6 @@ jobs:
           -b ./backend-go \
           --caproverName mycaprover
 
-    # 8. Deploy Python Backend
     - name: Deploy Python Backend
       run: |
         caprover deploy \
