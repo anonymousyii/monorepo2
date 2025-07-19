@@ -25,47 +25,32 @@ jobs:
           -p ${{ secrets.CAPROVER_PASSWORD }} \
           -n mycaprover
 
-    # Debug: Check frontend folder before deploying
-    - name: Debug Frontend Files
-      run: |
-        echo "=== Checking Frontend Directory ==="
-        ls -la ./frontend
-        echo "=== captain-definition content ==="
-        cat ./frontend/captain-definition || echo "captain-definition missing!"
-
+    # Deploy Frontend
     - name: Deploy Frontend
       run: |
+        FRONTEND_PATH=$(pwd)/frontend
+        echo "Deploying from $FRONTEND_PATH"
         caprover deploy \
           -n new-frontend \
-          -b ./frontend \
+          -b $FRONTEND_PATH \
           --caproverName mycaprover
 
-    # Debug: Check Go backend folder
-    - name: Debug Go Backend Files
-      run: |
-        echo "=== Checking Go Backend Directory ==="
-        ls -la ./backend-go
-        echo "=== captain-definition content ==="
-        cat ./backend-go/captain-definition || echo "captain-definition missing!"
-
+    # Deploy Go Backend
     - name: Deploy Go Backend
       run: |
+        GO_PATH=$(pwd)/backend-go
+        echo "Deploying from $GO_PATH"
         caprover deploy \
           -n new-backend-go \
-          -b ./backend-go \
+          -b $GO_PATH \
           --caproverName mycaprover
 
-    # Debug: Check Python backend folder
-    - name: Debug Python Backend Files
-      run: |
-        echo "=== Checking Python Backend Directory ==="
-        ls -la ./backend-python
-        echo "=== captain-definition content ==="
-        cat ./backend-python/captain-definition || echo "captain-definition missing!"
-
+    # Deploy Python Backend
     - name: Deploy Python Backend
       run: |
+        PY_PATH=$(pwd)/backend-python
+        echo "Deploying from $PY_PATH"
         caprover deploy \
           -n new-backend-python \
-          -b ./backend-python \
+          -b $PY_PATH \
           --caproverName mycaprover
