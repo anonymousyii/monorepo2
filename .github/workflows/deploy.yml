@@ -32,7 +32,7 @@ jobs:
         echo "Deploying from $FRONTEND_PATH"
         caprover deploy \
           -n new-frontend \
-          -b $FRONTEND_PATH \
+          -d $FRONTEND_PATH \
           --caproverName mycaprover
 
     # Deploy Go Backend
@@ -42,7 +42,7 @@ jobs:
         echo "Deploying from $GO_PATH"
         caprover deploy \
           -n new-backend-go \
-          -b $GO_PATH \
+          -d $GO_PATH \
           --caproverName mycaprover
 
     # Deploy Python Backend
@@ -52,5 +52,5 @@ jobs:
         echo "Deploying from $PY_PATH"
         caprover deploy \
           -n new-backend-python \
-          -b $PY_PATH \
+          -d $PY_PATH \
           --caproverName mycaprover
