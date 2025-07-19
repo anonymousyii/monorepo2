@@ -41,12 +41,6 @@ jobs:
       matrix:
         app: [frontend, backend-go, backend-python]
 
-    if: |
-      needs.detect-changes.outputs.deploy_all == 'true' ||
-      (matrix.app == 'frontend' && needs.detect-changes.outputs.frontend == 'true') ||
-      (matrix.app == 'backend-go' && needs.detect-changes.outputs.backend_go == 'true') ||
-      (matrix.app == 'backend-python' && needs.detect-changes.outputs.backend_python == 'true')
-
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -59,7 +53,12 @@ jobs:
       - name: Install CapRover CLI
         run: npm install -g caprover
 
-      - name: Deploy App
+      - name: Conditional Deploy
+        if: |
+          needs.detect-changes.outputs.deploy_all == 'true' ||
+          (matrix.app == 'frontend' && needs.detect-changes.outputs.frontend == 'true') ||
+          (matrix.app == 'backend-go' && needs.detect-changes.outputs.backend_go == 'true') ||
+          (matrix.app == 'backend-python' && needs.detect-changes.outputs.backend_python == 'true')
         run: |
           if [ "${{ matrix.app }}" == "frontend" ]; then
             APP_NAME="${{ secrets.CAPROVER_FRONTEND_APP }}"
