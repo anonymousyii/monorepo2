@@ -9,38 +9,42 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    # 1. Checkout your repository
     - name: Checkout code
       uses: actions/checkout@v4
 
+    # 2. Install CapRover CLI
     - name: Install CapRover CLI
       run: npm install -g caprover
 
-    # Deploy Frontend
+    # 3. Login to CapRover (using IP and port for root domain)
+    - name: Login to CapRover
+      run: |
+        caprover login \
+          -u http://34.122.198.221:3000 \
+          -p ${{ secrets.CAPROVER_PASSWORD }} \
+          -n mycaprover
+
+    # 4. Deploy Frontend
     - name: Deploy Frontend
       run: |
-        caprover login -n captain \
-          -p ${{ secrets.CAPROVER_PASSWORD }} \
-          -u http://34.122.198.221
         caprover deploy \
           -n new-frontend \
-          -b ./frontend
+          -b ./frontend \
+          --caproverName mycaprover
 
-    # Deploy Go Backend
+    # 5. Deploy Go Backend
     - name: Deploy Go Backend
       run: |
-        caprover login -n captain \
-          -p ${{ secrets.CAPROVER_PASSWORD }} \
-          -u http://34.122.198.221
         caprover deploy \
           -n new-backend-go \
-          -b ./backend-go
+          -b ./backend-go \
+          --caproverName mycaprover
 
-    # Deploy Python Backend
+    # 6. Deploy Python Backend
     - name: Deploy Python Backend
       run: |
-        caprover login -n captain \
-          -p ${{ secrets.CAPROVER_PASSWORD }} \
-          -u http://34.122.198.221
         caprover deploy \
           -n new-backend-python \
-          -b ./backend-python
+          -b ./backend-python \
+          --caproverName mycaprover
