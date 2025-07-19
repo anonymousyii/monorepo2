@@ -9,22 +9,27 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    # 1. Checkout your repository
     - name: Checkout code
       uses: actions/checkout@v4
 
+    # 2. Install CapRover CLI
     - name: Install CapRover CLI
       run: npm install -g caprover
 
-    - name: Clean Old CapRover Machine (if exists)
+    # 3. Clean Old CapRover Machine (if exists)
+    - name: Clean Old CapRover Machine
       run: caprover logout -n mycaprover || true
 
+    # 4. Login to CapRover (nip.io root domain)
     - name: Login to CapRover
       run: |
         caprover login \
-          --caproverUrl http://34.122.198.221:3000 \
+          -u http://captain.34.122.198.221.nip.io \
           -p ${{ secrets.CAPROVER_PASSWORD }} \
           -n mycaprover
 
+    # 5. Deploy Frontend
     - name: Deploy Frontend
       run: |
         caprover deploy \
@@ -32,6 +37,7 @@ jobs:
           -b ./frontend \
           --caproverName mycaprover
 
+    # 6. Deploy Go Backend
     - name: Deploy Go Backend
       run: |
         caprover deploy \
@@ -39,6 +45,7 @@ jobs:
           -b ./backend-go \
           --caproverName mycaprover
 
+    # 7. Deploy Python Backend
     - name: Deploy Python Backend
       run: |
         caprover deploy \
