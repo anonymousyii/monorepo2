@@ -2,97 +2,45 @@ name: Deploy to CapRover
 
 on:
   push:
-    branches:
-      - main
-  workflow_dispatch:
-    inputs:
-      app:
-        description: "Select app to deploy (frontend, backend-go, backend-python, all)"
-        required: false
-        default: ""
+    branches: [ main ]
 
 jobs:
-  detect-changes:
+  deploy:
     runs-on: ubuntu-latest
-    outputs:
-      frontend: ${{ steps.filter.outputs.frontend }}
-      backend_go: ${{ steps.filter.outputs.backend_go }}
-      backend_python: ${{ steps.filter.outputs.backend_python }}
-      deploy_all: ${{ steps.check_message.outputs.deploy_all }}
 
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v4
 
-      - name: Check Changed Paths
-        id: filter
-        run: |
-          git fetch origin main || true
-          CHANGED_FILES=$(git diff --name-only origin/main...HEAD 2>/dev/null || git ls-files)
+    - name: Install CapRover CLI
+      run: npm install -g caprover
 
-          echo "frontend=$(echo "$CHANGED_FILES" | grep -q '^frontend/' && echo true || echo false)" >> $GITHUB_OUTPUT
-          echo "backend_go=$(echo "$CHANGED_FILES" | grep -q '^backend-go/' && echo true || echo false)" >> $GITHUB_OUTPUT
-          echo "backend_python=$(echo "$CHANGED_FILES" | grep -q '^backend-python/' && echo true || echo false)" >> $GITHUB_OUTPUT
+    # Deploy Frontend
+    - name: Deploy Frontend
+      run: |
+        caprover login -n captain \
+          -p ${{ secrets.CAPROVER_PASSWORD }} \
+          -u http://34.122.198.221
+        caprover deploy \
+          -n new-frontend \
+          -b ./frontend
 
-      - name: Check Commit Message for Deploy All
-        id: check_message
-        run: |
-          if [[ "${{ github.event.head_commit.message }}" == *"[deploy-all]"* ]]; then
-            echo "deploy_all=true" >> $GITHUB_OUTPUT
-          else
-            echo "deploy_all=false" >> $GITHUB_OUTPUT
-          fi
+    # Deploy Go Backend
+    - name: Deploy Go Backend
+      run: |
+        caprover login -n captain \
+          -p ${{ secrets.CAPROVER_PASSWORD }} \
+          -u http://34.122.198.221
+        caprover deploy \
+          -n new-backend-go \
+          -b ./backend-go
 
-  deploy-frontend:
-    needs: detect-changes
-    runs-on: ubuntu-latest
-    if: |
-      github.event_name == 'workflow_dispatch' && (github.event.inputs.app == 'frontend' || github.event.inputs.app == 'all') ||
-      needs.detect-changes.outputs.deploy_all == 'true' ||
-      needs.detect-changes.outputs.frontend == 'true'
-
-    steps:
-      - uses: actions/checkout@v4
-      - run: npm install -g caprover
-      - run: |
-          caprover deploy \
-            --caproverUrl ${{ secrets.CAPROVER_URL }} \
-            --caproverPassword ${{ secrets.CAPROVER_PASSWORD }} \
-            --appName ${{ secrets.CAPROVER_FRONTEND_APP }} \
-            --branch main
-
-  deploy-backend-go:
-    needs: detect-changes
-    runs-on: ubuntu-latest
-    if: |
-      github.event_name == 'workflow_dispatch' && (github.event.inputs.app == 'backend-go' || github.event.inputs.app == 'all') ||
-      needs.detect-changes.outputs.deploy_all == 'true' ||
-      needs.detect-changes.outputs.backend_go == 'true'
-
-    steps:
-      - uses: actions/checkout@v4
-      - run: npm install -g caprover
-      - run: |
-          caprover deploy \
-            --caproverUrl ${{ secrets.CAPROVER_URL }} \
-            --caproverPassword ${{ secrets.CAPROVER_PASSWORD }} \
-            --appName ${{ secrets.CAPROVER_BACKEND_GO_APP }} \
-            --branch main
-
-  deploy-backend-python:
-    needs: detect-changes
-    runs-on: ubuntu-latest
-    if: |
-      github.event_name == 'workflow_dispatch' && (github.event.inputs.app == 'backend-python' || github.event.inputs.app == 'all') ||
-      needs.detect-changes.outputs.deploy_all == 'true' ||
-      needs.detect-changes.outputs.backend_python == 'true'
-
-    steps:
-      - uses: actions/checkout@v4
-      - run: npm install -g caprover
-      - run: |
-          caprover deploy \
-            --caproverUrl ${{ secrets.CAPROVER_URL }} \
-            --caproverPassword ${{ secrets.CAPROVER_PASSWORD }} \
-            --appName ${{ secrets.CAPROVER_BACKEND_PYTHON_APP }} \
-            --branch main
+    # Deploy Python Backend
+    - name: Deploy Python Backend
+      run: |
+        caprover login -n captain \
+          -p ${{ secrets.CAPROVER_PASSWORD }} \
+          -u http://34.122.198.221
+        caprover deploy \
+          -n new-backend-python \
+          -b ./backend-python
