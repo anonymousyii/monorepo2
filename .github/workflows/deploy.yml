@@ -5,54 +5,87 @@ on:
     branches: [ main ]
 
 jobs:
-  deploy:
+  detect-changes:
     runs-on: ubuntu-latest
+    outputs:
+      frontend: ${{ steps.filter.outputs.frontend }}
+      backendgo: ${{ steps.filter.outputs.backendgo }}
+      backendpython: ${{ steps.filter.outputs.backendpython }}
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Install CapRover CLI
-      run: npm install -g caprover
+    - name: Detect changed folders
+      id: filter
+      uses: dorny/paths-filter@v3
+      with:
+        filters: |
+          frontend:
+            - 'frontend/**'
+          backendgo:
+            - 'backend-go/**'
+          backendpython:
+            - 'backend-python/**'
 
-    - name: Clean Old CapRover Machine
-      run: caprover logout -n mycaprover || true
-
-    - name: Login to CapRover
-      run: |
+  deploy-frontend:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.frontend == 'true'
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - run: npm install -g caprover
+    - run: caprover logout -n mycaprover || true
+    - run: |
         caprover login \
           -u https://captain.34.122.198.221.nip.io \
           -p ${{ secrets.CAPROVER_PASSWORD }} \
           -n mycaprover
-
-    # ✅ Deploy Frontend
     - name: Deploy Frontend
       run: |
-        echo "Packaging frontend (with folder)..."
         tar -czf frontend.tar.gz frontend
-        echo "Deploying frontend..."
         caprover deploy \
           --appName new-frontend \
           --tarFile ./frontend.tar.gz \
           --caproverName mycaprover
 
-    # ✅ Deploy Go Backend
+  deploy-backend-go:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.backendgo == 'true'
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - run: npm install -g caprover
+    - run: caprover logout -n mycaprover || true
+    - run: |
+        caprover login \
+          -u https://captain.34.122.198.221.nip.io \
+          -p ${{ secrets.CAPROVER_PASSWORD }} \
+          -n mycaprover
     - name: Deploy Go Backend
       run: |
-        echo "Packaging Go backend (with folder)..."
         tar -czf backend-go.tar.gz backend-go
-        echo "Deploying Go backend..."
         caprover deploy \
           --appName new-backend-go \
           --tarFile ./backend-go.tar.gz \
           --caproverName mycaprover
 
-    # ✅ Deploy Python Backend
+  deploy-backend-python:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.backendpython == 'true'
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - run: npm install -g caprover
+    - run: caprover logout -n mycaprover || true
+    - run: |
+        caprover login \
+          -u https://captain.34.122.198.221.nip.io \
+          -p ${{ secrets.CAPROVER_PASSWORD }} \
+          -n mycaprover
     - name: Deploy Python Backend
       run: |
-        echo "Packaging Python backend (with folder)..."
         tar -czf backend-python.tar.gz backend-python
-        echo "Deploying Python backend..."
         caprover deploy \
           --appName new-backend-python \
           --tarFile ./backend-python.tar.gz \
