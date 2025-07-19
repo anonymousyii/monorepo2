@@ -28,8 +28,8 @@ jobs:
     # ✅ Deploy Frontend
     - name: Deploy Frontend
       run: |
-        echo "Packaging frontend..."
-        tar -czf frontend.tar.gz -C frontend .
+        echo "Packaging frontend (with folder)..."
+        tar -czf frontend.tar.gz frontend
         echo "Deploying frontend..."
         caprover deploy \
           --appName new-frontend \
@@ -39,8 +39,8 @@ jobs:
     # ✅ Deploy Go Backend
     - name: Deploy Go Backend
       run: |
-        echo "Packaging Go backend..."
-        tar -czf backend-go.tar.gz -C backend-go .
+        echo "Packaging Go backend (with folder)..."
+        tar -czf backend-go.tar.gz backend-go
         echo "Deploying Go backend..."
         caprover deploy \
           --appName new-backend-go \
@@ -50,8 +50,8 @@ jobs:
     # ✅ Deploy Python Backend
     - name: Deploy Python Backend
       run: |
-        echo "Packaging Python backend..."
-        tar -czf backend-python.tar.gz -C backend-python .
+        echo "Packaging Python backend (with folder)..."
+        tar -czf backend-python.tar.gz backend-python
         echo "Deploying Python backend..."
         caprover deploy \
           --appName new-backend-python \
