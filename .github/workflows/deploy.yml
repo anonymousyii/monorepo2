@@ -25,6 +25,14 @@ jobs:
           -p ${{ secrets.CAPROVER_PASSWORD }} \
           -n mycaprover
 
+    # Debug: Check frontend folder before deploying
+    - name: Debug Frontend Files
+      run: |
+        echo "=== Checking Frontend Directory ==="
+        ls -la ./frontend
+        echo "=== captain-definition content ==="
+        cat ./frontend/captain-definition || echo "captain-definition missing!"
+
     - name: Deploy Frontend
       run: |
         caprover deploy \
@@ -32,12 +40,28 @@ jobs:
           -b ./frontend \
           --caproverName mycaprover
 
+    # Debug: Check Go backend folder
+    - name: Debug Go Backend Files
+      run: |
+        echo "=== Checking Go Backend Directory ==="
+        ls -la ./backend-go
+        echo "=== captain-definition content ==="
+        cat ./backend-go/captain-definition || echo "captain-definition missing!"
+
     - name: Deploy Go Backend
       run: |
         caprover deploy \
           -n new-backend-go \
           -b ./backend-go \
           --caproverName mycaprover
+
+    # Debug: Check Python backend folder
+    - name: Debug Python Backend Files
+      run: |
+        echo "=== Checking Python Backend Directory ==="
+        ls -la ./backend-python
+        echo "=== captain-definition content ==="
+        cat ./backend-python/captain-definition || echo "captain-definition missing!"
 
     - name: Deploy Python Backend
       run: |
