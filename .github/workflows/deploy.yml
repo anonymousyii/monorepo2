@@ -17,11 +17,11 @@ jobs:
     - name: Install CapRover CLI
       run: npm install -g caprover
 
-    # 3. Login to CapRover (using IP and port for root domain)
+    # 3. Login to CapRover (using --caproverUrl to avoid captain.<ip> issue)
     - name: Login to CapRover
       run: |
         caprover login \
-          -u http://34.122.198.221:3000 \
+          --caproverUrl http://34.122.198.221:3000 \
           -p ${{ secrets.CAPROVER_PASSWORD }} \
           -n mycaprover
 
