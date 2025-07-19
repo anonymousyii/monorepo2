@@ -28,26 +28,32 @@ jobs:
     # ✅ Deploy Frontend
     - name: Deploy Frontend
       run: |
-        cd frontend
-        echo "Deploying frontend from $(pwd)"
+        echo "Packaging frontend..."
+        tar -czf frontend.tar.gz -C frontend .
+        echo "Deploying frontend..."
         caprover deploy \
           -n new-frontend \
+          --tarFile ./frontend.tar.gz \
           --caproverName mycaprover
 
     # ✅ Deploy Go Backend
     - name: Deploy Go Backend
       run: |
-        cd backend-go
-        echo "Deploying Go backend from $(pwd)"
+        echo "Packaging Go backend..."
+        tar -czf backend-go.tar.gz -C backend-go .
+        echo "Deploying Go backend..."
         caprover deploy \
           -n new-backend-go \
+          --tarFile ./backend-go.tar.gz \
           --caproverName mycaprover
 
     # ✅ Deploy Python Backend
     - name: Deploy Python Backend
       run: |
-        cd backend-python
-        echo "Deploying Python backend from $(pwd)"
+        echo "Packaging Python backend..."
+        tar -czf backend-python.tar.gz -C backend-python .
+        echo "Deploying Python backend..."
         caprover deploy \
           -n new-backend-python \
+          --tarFile ./backend-python.tar.gz \
           --caproverName mycaprover
